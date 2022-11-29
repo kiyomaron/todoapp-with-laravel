@@ -1,6 +1,6 @@
-import React from "react";
-import { useTasks } from "../../../queries/TaskQuery";
-import TaskItem from "./TaskItem";
+import React from "react"
+import { useTasks } from "../../../queries/TaskQuery"
+import TaskItem from "./TaskItem"
 
 const TaskList: React.FC  = () => {
 
