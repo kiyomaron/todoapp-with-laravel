@@ -3844,6 +3844,7 @@ var TaskItem = function TaskItem(_ref) {
   var task = _ref.task;
   var updateDoneTask = (0, TaskQuery_1.useUpdateDoneTask)();
   var updateTask = (0, TaskQuery_1.useUpdateTask)();
+  var deleteTask = (0, TaskQuery_1.useDeleteTask)();
   var _ref2 = (0, react_1.useState)(undefined),
     _ref3 = _slicedToArray(_ref2, 2),
     editTitle = _ref3[0],
@@ -3891,7 +3892,10 @@ var TaskItem = function TaskItem(_ref) {
     return react_1["default"].createElement(react_1["default"].Fragment, null, react_1["default"].createElement("div", {
       onClick: handleToggleEdit
     }, react_1["default"].createElement("span", null, task.title)), react_1["default"].createElement("button", {
-      className: "btn is-delete"
+      className: "btn is-delete",
+      onClick: function onClick() {
+        return deleteTask.mutate(task.id);
+      }
     }, "\u524A\u9664"));
   };
   return react_1["default"].createElement("li", {

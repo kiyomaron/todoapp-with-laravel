@@ -11,6 +11,7 @@ type Props = {
 const TaskItem: React.FC<Props> = ({ task }) => {
     const updateDoneTask = useUpdateDoneTask()
     const updateTask = useUpdateTask()
+    const deleteTask = useDeleteTask()
 
     const [editTitle, setEditTitle] = useState<string|undefined>(undefined)
 
@@ -72,7 +73,9 @@ const TaskItem: React.FC<Props> = ({ task }) => {
                 <div onClick={handleToggleEdit}>
                     <span>{task.title}</span>
                 </div>
-                <button className="btn is-delete">
+                <button 
+                    className="btn is-delete"
+                    onClick={() => deleteTask.mutate(task.id)}>
                     削除
                 </button>
             </>
