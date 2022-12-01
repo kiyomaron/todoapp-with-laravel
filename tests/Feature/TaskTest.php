@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Contracts\Auth\Authenticatable;
 use Tests\TestCase;
 use App\Models\Task;
 use App\Models\User;
@@ -13,9 +14,9 @@ class TaskTest extends TestCase
 
     public function setUp(): void
     {
-        parent::setup();
+        parent::setUp();
 
-        $user = User::factory()->create();
+        $user = factory(User::class)->create();
         $this->actingAs($user);
     }
     /**
