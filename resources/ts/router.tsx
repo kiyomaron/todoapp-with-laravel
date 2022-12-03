@@ -3,40 +3,69 @@ import {
     BrowserRouter,
     Routes,
     Route,
-    Link
+    Link,
+    RouteProps,
+    Navigate
   } from "react-router-dom"
 import TaskPage from './pages/tasks'
 import LoginPage from './pages/login'
 import HelpPage from './pages/help'
+import NotFoundPage from "./pages/error"
+import { useLogout, useUser } from "./queries/AuthQuery"
+import { useAuth } from "./hooks/AuthContext"
+
+import { RouteAuthGuard } from "./RouteAuthGuard"
+import { RouteAuthLogin } from "./RouteAuthLogin"
 
 // import axios from "axios"
 
 const Router = () => {
+  const logout = useLogout()
+  const { isAuth, setIsAuth } = useAuth()
+  const { isLoading, data: authUser } = useUser()
+
   useEffect(() => {
-   /*  axios.post('api/login', {
-      email: 'admin@example.com',
-      password: '123456789'
-    }).then(response => {
-      console.log(response)
-    }) */
-  })
-    return (
-        <BrowserRouter>
-          <header className="global-head">
-                <ul>
-                    <li><Link to="/">ホーム</Link></li>
-                    <li><Link to="/help">ヘルプ</Link></li>
-                    <li><Link to="/login">ログイン</Link></li>
-                    <li><span>ログアウト</span></li>
-                </ul>
-            </header>
-            <Routes>
-              <Route path="/login" element={<LoginPage />} />
-              <Route path="/help" element={<HelpPage />}/>
-              <Route path="/" element={<TaskPage />}/>
-            </Routes>
-        </BrowserRouter>
-      );
+    if (authUser) {
+      setIsAuth(true)
+    }
+   }, [authUser])
+
+
+  const navigation = (
+    <header className="global-head">
+      <ul>
+        <li><Link to="/">ホーム</Link></li>
+        <li><Link to="/help">ヘルプ</Link></li>
+        <li onClick={() => logout.mutate()}><span>ログアウト</span></li>
+      </ul>
+      </header>
+  )
+  const loginNavigation = (
+    <header className="global-head">
+      <ul>
+        <li><Link to="/help">ヘルプ</Link></li>
+        <li><Link to="/login">ログイン</Link></li>
+      </ul>
+    </header>
+  )
+
+  if(isLoading) return <div className="loader"></div>
+
+  return (
+    <>
+      <BrowserRouter>
+        { isAuth ? navigation : loginNavigation }
+        <Routes>
+          <Route path="/help" element={<HelpPage />}/>
+          <Route path="/login" element={
+            <RouteAuthLogin component={<LoginPage />} redirect="/" />} />
+          <Route path="/" element={
+            <RouteAuthGuard component={<TaskPage />} redirect="/login" />} />
+          <Route path="*" element={<NotFoundPage />} />
+        </Routes>
+      </BrowserRouter>
+    </>
+  );
 }
 
 

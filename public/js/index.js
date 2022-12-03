@@ -3414,6 +3414,7 @@ var router_1 = __importDefault(__webpack_require__(/*! ./router */ "./resources/
 var react_query_1 = __webpack_require__(/*! react-query */ "./node_modules/react-query/es/index.js");
 var react_toastify_1 = __webpack_require__(/*! react-toastify */ "./node_modules/react-toastify/dist/react-toastify.js");
 __webpack_require__(/*! react-toastify/dist/ReactToastify.css */ "./node_modules/react-toastify/dist/ReactToastify.css");
+var AuthContext_1 = __webpack_require__(/*! ./hooks/AuthContext */ "./resources/ts/hooks/AuthContext.tsx");
 var App = function App() {
   var queryClient = new react_query_1.QueryClient({
     defaultOptions: {
@@ -3425,13 +3426,93 @@ var App = function App() {
       }
     }
   });
-  return react_1["default"].createElement(react_query_1.QueryClientProvider, {
+  return react_1["default"].createElement(AuthContext_1.AuthProvider, null, react_1["default"].createElement(react_query_1.QueryClientProvider, {
     client: queryClient
   }, react_1["default"].createElement(router_1["default"], null), react_1["default"].createElement(react_toastify_1.ToastContainer, {
     hideProgressBar: true
-  }));
+  })));
 };
 exports["default"] = App;
+
+/***/ }),
+
+/***/ "./resources/ts/RouteAuthGuard.tsx":
+/*!*****************************************!*\
+  !*** ./resources/ts/RouteAuthGuard.tsx ***!
+  \*****************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var __importDefault = this && this.__importDefault || function (mod) {
+  return mod && mod.__esModule ? mod : {
+    "default": mod
+  };
+};
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports.RouteAuthGuard = void 0;
+var react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+var react_router_dom_1 = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router-dom/dist/index.js");
+var AuthContext_1 = __webpack_require__(/*! ./hooks/AuthContext */ "./resources/ts/hooks/AuthContext.tsx");
+var RouteAuthGuard = function RouteAuthGuard(props) {
+  var _ref = (0, AuthContext_1.useAuth)(),
+    isAuth = _ref.isAuth,
+    setIsAuth = _ref.setIsAuth;
+  if (!isAuth) {
+    return react_1["default"].createElement(react_router_dom_1.Navigate, {
+      to: props.redirect,
+      state: {
+        from: (0, react_router_dom_1.useLocation)()
+      },
+      replace: false
+    });
+  }
+  return react_1["default"].createElement(react_1["default"].Fragment, null, props.component);
+};
+exports.RouteAuthGuard = RouteAuthGuard;
+
+/***/ }),
+
+/***/ "./resources/ts/RouteAuthLogin.tsx":
+/*!*****************************************!*\
+  !*** ./resources/ts/RouteAuthLogin.tsx ***!
+  \*****************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var __importDefault = this && this.__importDefault || function (mod) {
+  return mod && mod.__esModule ? mod : {
+    "default": mod
+  };
+};
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports.RouteAuthLogin = void 0;
+var react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+var react_router_dom_1 = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router-dom/dist/index.js");
+var AuthContext_1 = __webpack_require__(/*! ./hooks/AuthContext */ "./resources/ts/hooks/AuthContext.tsx");
+var RouteAuthLogin = function RouteAuthLogin(props) {
+  var _ref = (0, AuthContext_1.useAuth)(),
+    isAuth = _ref.isAuth,
+    setIsAuth = _ref.setIsAuth;
+  if (isAuth) {
+    return react_1["default"].createElement(react_router_dom_1.Navigate, {
+      to: props.redirect,
+      state: {
+        from: (0, react_router_dom_1.useLocation)()
+      },
+      replace: false
+    });
+  }
+  return react_1["default"].createElement(react_1["default"].Fragment, null, props.component);
+};
+exports.RouteAuthLogin = RouteAuthLogin;
 
 /***/ }),
 
@@ -3726,6 +3807,84 @@ exports.deleteTask = deleteTask;
 
 /***/ }),
 
+/***/ "./resources/ts/hooks/AuthContext.tsx":
+/*!********************************************!*\
+  !*** ./resources/ts/hooks/AuthContext.tsx ***!
+  \********************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+
+function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }
+function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+function _iterableToArrayLimit(arr, i) { var _i = arr == null ? null : typeof Symbol !== "undefined" && arr[Symbol.iterator] || arr["@@iterator"]; if (_i == null) return; var _arr = []; var _n = true; var _d = false; var _s, _e; try { for (_i = _i.call(arr); !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
+function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
+var __createBinding = this && this.__createBinding || (Object.create ? function (o, m, k, k2) {
+  if (k2 === undefined) k2 = k;
+  var desc = Object.getOwnPropertyDescriptor(m, k);
+  if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+    desc = {
+      enumerable: true,
+      get: function get() {
+        return m[k];
+      }
+    };
+  }
+  Object.defineProperty(o, k2, desc);
+} : function (o, m, k, k2) {
+  if (k2 === undefined) k2 = k;
+  o[k2] = m[k];
+});
+var __setModuleDefault = this && this.__setModuleDefault || (Object.create ? function (o, v) {
+  Object.defineProperty(o, "default", {
+    enumerable: true,
+    value: v
+  });
+} : function (o, v) {
+  o["default"] = v;
+});
+var __importStar = this && this.__importStar || function (mod) {
+  if (mod && mod.__esModule) return mod;
+  var result = {};
+  if (mod != null) for (var k in mod) {
+    if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+  }
+  __setModuleDefault(result, mod);
+  return result;
+};
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports.useAuth = exports.AuthProvider = void 0;
+var react_1 = __importStar(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+var AuthContext = (0, react_1.createContext)({
+  isAuth: false,
+  setIsAuth: function setIsAuth() {}
+});
+var AuthProvider = function AuthProvider(_ref) {
+  var children = _ref.children;
+  var _ref2 = (0, react_1.useState)(false),
+    _ref3 = _slicedToArray(_ref2, 2),
+    isAuth = _ref3[0],
+    setIsAuth = _ref3[1];
+  return react_1["default"].createElement(AuthContext.Provider, {
+    value: {
+      isAuth: isAuth,
+      setIsAuth: setIsAuth
+    }
+  }, children);
+};
+exports.AuthProvider = AuthProvider;
+var useAuth = function useAuth() {
+  return (0, react_1.useContext)(AuthContext);
+};
+exports.useAuth = useAuth;
+
+/***/ }),
+
 /***/ "./resources/ts/index.tsx":
 /*!********************************!*\
   !*** ./resources/ts/index.tsx ***!
@@ -3747,6 +3906,33 @@ var react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/r
 var react_dom_1 = __importDefault(__webpack_require__(/*! react-dom */ "./node_modules/react-dom/index.js"));
 var App_1 = __importDefault(__webpack_require__(/*! ./App */ "./resources/ts/App.tsx"));
 react_dom_1["default"].render(react_1["default"].createElement(App_1["default"], null), document.getElementById('app'));
+
+/***/ }),
+
+/***/ "./resources/ts/pages/error/index.tsx":
+/*!********************************************!*\
+  !*** ./resources/ts/pages/error/index.tsx ***!
+  \********************************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var __importDefault = this && this.__importDefault || function (mod) {
+  return mod && mod.__esModule ? mod : {
+    "default": mod
+  };
+};
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+var react_1 = __importDefault(__webpack_require__(/*! react */ "./node_modules/react/index.js"));
+var NotFoundPage = function NotFoundPage() {
+  return react_1["default"].createElement(react_1["default"].Fragment, null, react_1["default"].createElement("div", {
+    className: "align-center"
+  }, react_1["default"].createElement("h1", null, "404 Not Found"), react_1["default"].createElement("p", null, "\u304A\u63A2\u3057\u306E\u30DA\u30FC\u30B8\u306F\u898B\u3064\u304B\u308A\u307E\u305B\u3093\u3067\u3057\u305F\u3002")));
+};
+exports["default"] = NotFoundPage;
 
 /***/ }),
 
@@ -4143,48 +4329,7 @@ var TaskList = function TaskList() {
       key: task.id,
       task: task
     });
-  }), react_1["default"].createElement("li", null, react_1["default"].createElement("label", {
-    className: "checkbox-label"
-  }, react_1["default"].createElement("input", {
-    type: "checkbox",
-    className: "checkbox-input"
-  })), react_1["default"].createElement("div", null, react_1["default"].createElement("span", null, "\u65B0\u3057\u3044TODO")), react_1["default"].createElement("button", {
-    className: "btn is-delete"
-  }, "\u524A\u9664")), react_1["default"].createElement("li", null, react_1["default"].createElement("label", {
-    className: "checkbox-label"
-  }, react_1["default"].createElement("input", {
-    type: "checkbox",
-    className: "checkbox-input"
-  })), react_1["default"].createElement("form", null, react_1["default"].createElement("input", {
-    type: "text",
-    className: "input",
-    defaultValue: "\u7DE8\u96C6\u4E2D\u306ETODO"
-  })), react_1["default"].createElement("button", {
-    className: "btn"
-  }, "\u66F4\u65B0")), react_1["default"].createElement("li", {
-    className: "done"
-  }, react_1["default"].createElement("label", {
-    className: "checkbox-label"
-  }, react_1["default"].createElement("input", {
-    type: "checkbox",
-    className: "checkbox-input"
-  })), react_1["default"].createElement("div", null, react_1["default"].createElement("span", null, "\u5B9F\u884C\u3057\u305FTODO")), react_1["default"].createElement("button", {
-    className: "btn is-delete"
-  }, "\u524A\u9664")), react_1["default"].createElement("li", null, react_1["default"].createElement("label", {
-    className: "checkbox-label"
-  }, react_1["default"].createElement("input", {
-    type: "checkbox",
-    className: "checkbox-input"
-  })), react_1["default"].createElement("div", null, react_1["default"].createElement("span", null, "\u30B4\u30DF\u6368\u3066")), react_1["default"].createElement("button", {
-    className: "btn is-delete"
-  }, "\u524A\u9664")), react_1["default"].createElement("li", null, react_1["default"].createElement("label", {
-    className: "checkbox-label"
-  }, react_1["default"].createElement("input", {
-    type: "checkbox",
-    className: "checkbox-input"
-  })), react_1["default"].createElement("div", null, react_1["default"].createElement("span", null, "\u6383\u9664")), react_1["default"].createElement("button", {
-    className: "btn is-delete"
-  }, "\u524A\u9664")))));
+  }))));
 };
 exports["default"] = TaskList;
 
@@ -4266,6 +4411,7 @@ exports.useLogout = exports.useLogin = exports.useUser = void 0;
 var api = __importStar(__webpack_require__(/*! ../api/AuthAPI */ "./resources/ts/api/AuthAPI.ts"));
 var react_query_1 = __webpack_require__(/*! react-query */ "./node_modules/react-query/es/index.js");
 var react_toastify_1 = __webpack_require__(/*! react-toastify */ "./node_modules/react-toastify/dist/react-toastify.js");
+var AuthContext_1 = __webpack_require__(/*! ../hooks/AuthContext */ "./resources/ts/hooks/AuthContext.tsx");
 var useUser = function useUser() {
   return (0, react_query_1.useQuery)('users', function () {
     return api.getUser();
@@ -4273,9 +4419,13 @@ var useUser = function useUser() {
 };
 exports.useUser = useUser;
 var useLogin = function useLogin() {
+  var _ref = (0, AuthContext_1.useAuth)(),
+    setIsAuth = _ref.setIsAuth;
   return (0, react_query_1.useMutation)(api.login, {
     onSuccess: function onSuccess(user) {
-      console.log(user);
+      if (user) {
+        setIsAuth(true);
+      }
     },
     onError: function onError() {
       react_toastify_1.toast.error('ログインに失敗しました。');
@@ -4284,9 +4434,13 @@ var useLogin = function useLogin() {
 };
 exports.useLogin = useLogin;
 var useLogout = function useLogout() {
+  var _ref2 = (0, AuthContext_1.useAuth)(),
+    setIsAuth = _ref2.setIsAuth;
   return (0, react_query_1.useMutation)(api.logout, {
     onSuccess: function onSuccess(user) {
-      console.log(user);
+      if (user) {
+        setIsAuth(false);
+      }
     },
     onError: function onError() {
       react_toastify_1.toast.error('ログアウトに失敗しました。');
@@ -4481,34 +4635,65 @@ var react_router_dom_1 = __webpack_require__(/*! react-router-dom */ "./node_mod
 var tasks_1 = __importDefault(__webpack_require__(/*! ./pages/tasks */ "./resources/ts/pages/tasks/index.tsx"));
 var login_1 = __importDefault(__webpack_require__(/*! ./pages/login */ "./resources/ts/pages/login/index.tsx"));
 var help_1 = __importDefault(__webpack_require__(/*! ./pages/help */ "./resources/ts/pages/help/index.tsx"));
+var error_1 = __importDefault(__webpack_require__(/*! ./pages/error */ "./resources/ts/pages/error/index.tsx"));
+var AuthQuery_1 = __webpack_require__(/*! ./queries/AuthQuery */ "./resources/ts/queries/AuthQuery.ts");
+var AuthContext_1 = __webpack_require__(/*! ./hooks/AuthContext */ "./resources/ts/hooks/AuthContext.tsx");
+var RouteAuthGuard_1 = __webpack_require__(/*! ./RouteAuthGuard */ "./resources/ts/RouteAuthGuard.tsx");
+var RouteAuthLogin_1 = __webpack_require__(/*! ./RouteAuthLogin */ "./resources/ts/RouteAuthLogin.tsx");
 // import axios from "axios"
 var Router = function Router() {
+  var logout = (0, AuthQuery_1.useLogout)();
+  var _ref = (0, AuthContext_1.useAuth)(),
+    isAuth = _ref.isAuth,
+    setIsAuth = _ref.setIsAuth;
+  var _ref2 = (0, AuthQuery_1.useUser)(),
+    isLoading = _ref2.isLoading,
+    authUser = _ref2.data;
   (0, react_1.useEffect)(function () {
-    /*  axios.post('api/login', {
-       email: 'admin@example.com',
-       password: '123456789'
-     }).then(response => {
-       console.log(response)
-     }) */
-  });
-  return react_1["default"].createElement(react_router_dom_1.BrowserRouter, null, react_1["default"].createElement("header", {
+    if (authUser) {
+      setIsAuth(true);
+    }
+  }, [authUser]);
+  var navigation = react_1["default"].createElement("header", {
     className: "global-head"
   }, react_1["default"].createElement("ul", null, react_1["default"].createElement("li", null, react_1["default"].createElement(react_router_dom_1.Link, {
     to: "/"
   }, "\u30DB\u30FC\u30E0")), react_1["default"].createElement("li", null, react_1["default"].createElement(react_router_dom_1.Link, {
     to: "/help"
+  }, "\u30D8\u30EB\u30D7")), react_1["default"].createElement("li", {
+    onClick: function onClick() {
+      return logout.mutate();
+    }
+  }, react_1["default"].createElement("span", null, "\u30ED\u30B0\u30A2\u30A6\u30C8"))));
+  var loginNavigation = react_1["default"].createElement("header", {
+    className: "global-head"
+  }, react_1["default"].createElement("ul", null, react_1["default"].createElement("li", null, react_1["default"].createElement(react_router_dom_1.Link, {
+    to: "/help"
   }, "\u30D8\u30EB\u30D7")), react_1["default"].createElement("li", null, react_1["default"].createElement(react_router_dom_1.Link, {
     to: "/login"
-  }, "\u30ED\u30B0\u30A4\u30F3")), react_1["default"].createElement("li", null, react_1["default"].createElement("span", null, "\u30ED\u30B0\u30A2\u30A6\u30C8")))), react_1["default"].createElement(react_router_dom_1.Routes, null, react_1["default"].createElement(react_router_dom_1.Route, {
-    path: "/login",
-    element: react_1["default"].createElement(login_1["default"], null)
-  }), react_1["default"].createElement(react_router_dom_1.Route, {
+  }, "\u30ED\u30B0\u30A4\u30F3"))));
+  if (isLoading) return react_1["default"].createElement("div", {
+    className: "loader"
+  });
+  return react_1["default"].createElement(react_1["default"].Fragment, null, react_1["default"].createElement(react_router_dom_1.BrowserRouter, null, isAuth ? navigation : loginNavigation, react_1["default"].createElement(react_router_dom_1.Routes, null, react_1["default"].createElement(react_router_dom_1.Route, {
     path: "/help",
     element: react_1["default"].createElement(help_1["default"], null)
   }), react_1["default"].createElement(react_router_dom_1.Route, {
+    path: "/login",
+    element: react_1["default"].createElement(RouteAuthLogin_1.RouteAuthLogin, {
+      component: react_1["default"].createElement(login_1["default"], null),
+      redirect: "/"
+    })
+  }), react_1["default"].createElement(react_router_dom_1.Route, {
     path: "/",
-    element: react_1["default"].createElement(tasks_1["default"], null)
-  })));
+    element: react_1["default"].createElement(RouteAuthGuard_1.RouteAuthGuard, {
+      component: react_1["default"].createElement(tasks_1["default"], null),
+      redirect: "/login"
+    })
+  }), react_1["default"].createElement(react_router_dom_1.Route, {
+    path: "*",
+    element: react_1["default"].createElement(error_1["default"], null)
+  }))));
 };
 exports["default"] = Router;
 
